@@ -1,0 +1,5 @@
+{
+  "name": "incident-backend-cpp",
+  "version-string": "0.1.0",
+  "dependencies":["drogon", "spdlog", "nlohmann-json", "sqlite-orm", "catch2", "icu"]
+}
