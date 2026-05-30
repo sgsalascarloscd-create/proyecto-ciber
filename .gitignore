@@ -1,0 +1,9 @@
+.env
+build/
+*.db
+# Block the local LSP/compiler cache
+.cache/
+# Block user-uploaded files at runtime
+uploads/
+# (Bonus) Block your CMake build directory
+build/
