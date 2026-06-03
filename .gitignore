@@ -7,3 +7,8 @@ build/
 uploads/
 # (Bonus) Block your CMake build directory
 build/
+# Terraform state (never commit)
+*.tfstate
+*.tfstate.backup
+*.tfstate.*
+.terraform/

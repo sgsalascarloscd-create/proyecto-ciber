@@ -1,0 +1,6 @@
+aws_region       = "us-east-1"
+environment      = "dev"
+image_tag        = "latest"
+desired_count    = 1
+log_level        = "info"
+log_retention_days = 30
