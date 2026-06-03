@@ -1,0 +1,31 @@
+# VCS
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+build/
+.cache/
+*.o
+*.obj
+*.so
+*.a
+*.dylib
+*.exe
+compile_commands.json
+CMakeUserPresets.json
+
+# Local data & runtime files
+.env
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+uploads/
+
+# Editor / IDE
+.vscode/
+.idea/
+.vs/
+*.swp
+.DS_Store
