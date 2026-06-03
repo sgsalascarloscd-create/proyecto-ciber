@@ -7,9 +7,10 @@ A backend server built with the [Drogon](https://github.com/drogonframework/drog
 [![C++20](https://img.shields.io/badge/C++-20-00599C?style=flat-square&logo=c%2B%2B)](https://isocpp.org)
 [![Drogon](https://img.shields.io/badge/Drogon-1.9.13-8A2BE2?style=flat-square)](https://github.com/drogonframework/drogon)
 [![CMake](https://img.shields.io/badge/CMake-%3E%3D3.22-064F8C?style=flat-square&logo=cmake)](https://cmake.org)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker)](docker-compose.yml)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-[Overview](#overview) • [Tech Stack](#tech-stack) • [Prerequisites](#prerequisites) • [Getting Started](#getting-started) • [Configuration](#configuration) • [Project Structure](#project-structure)
+[Overview](#overview) • [Tech Stack](#tech-stack) • [Prerequisites](#prerequisites) • [Getting Started](#getting-started) • [Running with Docker](#running-with-docker) • [Configuration](#configuration) • [Project Structure](#project-structure)
 
 ---
 
@@ -91,6 +92,69 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug \
 cmake --build .
 ```
 
+## Running with Docker
+
+The project ships with a multi-stage `Dockerfile` and a `docker-compose.yml` so you can build and run the server without installing vcpkg, CMake, or a C++ toolchain on your machine. vcpkg and the build dependencies live inside the image.
+
+### Prerequisites
+
+- [Docker Engine](https://docs.docker.com/engine/install/) 24+
+- [Docker Compose](https://docs.docker.com/compose/install/) v2 (bundled with recent Docker Desktop)
+
+### Build and start
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+The first build pulls a Debian base image, clones vcpkg, compiles every dependency (Drogon, spdlog, sqlite-orm, nlohmann-json, Catch2, ICU, and their transitive system libraries), and produces the `incident-backend-cpp` binary inside the image. Subsequent builds reuse the vcpkg and build caches.
+
+Once the server reports `Starting server on port http://127.0.0.1:8080`, the API is reachable at `http://localhost:8080`.
+
+### What you get
+
+- A slim runtime image based on `debian:bookworm-slim` that runs as a non-root user.
+- A named volume `incident-backend-data` mounted at `/data` so the SQLite database persists across container restarts.
+- A bind mount of `./uploads` for the file upload scaffold described in the project structure.
+- A `HEALTHCHECK` that pings `GET /api/v1/incidents` every 30 seconds.
+- BuildKit cache mounts (`/opt/vcpkg-cache` and `/src/build`) for fast rebuilds. Make sure BuildKit is enabled:
+
+  ```bash
+  # One-off enable
+  DOCKER_BUILDKIT=1 docker compose build
+
+  # Or permanently in ~/.docker/config.json
+  { "features": { "buildkit": true } }
+  ```
+
+### Common commands
+
+```bash
+# Start in the background
+docker compose up -d --build
+
+# Follow logs
+docker compose logs -f api
+
+# Stop and remove the container (the named volume is kept)
+docker compose down
+
+# Stop and also wipe the database volume
+docker compose down --volumes
+
+# Open a shell inside the running container
+docker compose exec api sh
+
+# Rebuild after pulling new sources (no cache)
+docker compose build --no-cache
+```
+
+### Customizing configuration
+
+Anything in `.env` is passed to the container via the `env_file` directive. The compose file also sets `DB_PATH=/data/backend.db` and `LOG_LEVEL` explicitly so the SQLite file lives inside the persistent volume. To override the port on the host, set `PORT` in `.env` (for example `PORT=9090`) and re-run `docker compose up`.
+
 ## Configuration
 
 The application reads configuration from a `.env` file in the project root and falls back to default values if not set.
@@ -110,6 +174,9 @@ The application reads configuration from a `.env` file in the project root and f
 ├── CMakeLists.txt          # Root build configuration
 ├── CMakePresets.json        # CMake presets (Ninja Debug)
 ├── vcpkg.json               # vcpkg manifest (dependency versions)
+├── Dockerfile               # Multi-stage build (Debian + vcpkg)
+├── docker-compose.yml       # Compose service for local development
+├── .dockerignore            # Files excluded from the Docker build context
 ├── .env.example             # Example environment file
 ├── src/
 │   ├── main.cpp             # Application entry point
