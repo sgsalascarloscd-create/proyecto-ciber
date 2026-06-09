@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
+
+env:
+  AWS_REGION: us-east-1
+
+permissions:
+  contents: read
+
+jobs:
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build the Docker image without pushing — validates that the
+      # Dockerfile + vcpkg dependencies + C++ sources compile cleanly.
+      - name: Build Docker image
+        run: docker build --target runtime -t incident-backend-ci .
+
+  terraform-validate:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+
+      - name: Init and validate
+        run: |
+          terraform init
+          terraform validate

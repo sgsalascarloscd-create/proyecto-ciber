@@ -1,0 +1,180 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+      - "LICENSE"
+
+env:
+  AWS_REGION: us-east-1
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # JOB 1: Create / update all AWS infrastructure
+  # ─────────────────────────────────────────────────────────────
+  # Runs terraform apply with a placeholder image tag so ECR,
+  # ALB, S3, VPC, ECS cluster, etc. all exist before we try
+  # to push a Docker image.  ECS tasks will fail to start with
+  # the placeholder — that's resolved in Job 3.
+  #
+  # Exposes outputs needed by downstream jobs.
+  # ─────────────────────────────────────────────────────────────
+  terraform-apply:
+    name: Create / Update Infrastructure
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    outputs:
+      ecr_url: ${{ steps.get-outputs.outputs.ecr_url }}
+      s3_bucket: ${{ steps.get-outputs.outputs.s3_bucket }}
+      alb_dns: ${{ steps.get-outputs.outputs.alb_dns }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Apply infrastructure
+        run: terraform apply -auto-approve -var="image_tag=placeholder"
+
+      - name: Extract outputs for downstream jobs
+        id: get-outputs
+        run: |
+          echo "ecr_url=$(terraform output -raw ecr_repository_url)"   >> $GITHUB_OUTPUT
+          echo "s3_bucket=$(terraform output -raw s3_website_bucket)"   >> $GITHUB_OUTPUT
+          echo "alb_dns=$(terraform output -raw alb_dns_name)"         >> $GITHUB_OUTPUT
+
+  # ─────────────────────────────────────────────────────────────
+  # JOB 2: Build Docker image & push to ECR
+  # ─────────────────────────────────────────────────────────────
+  # Runs after ECR exists (created by Job 1).  Tags with both
+  # the commit SHA (immutable) and "latest" (cache source).
+  # ─────────────────────────────────────────────────────────────
+  build-and-push:
+    name: Build & Push Docker Image
+    needs: terraform-apply
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image
+        env:
+          ECR_URL: ${{ needs.terraform-apply.outputs.ecr_url }}
+        run: |
+          docker build \
+            --cache-from "${ECR_URL}:latest" \
+            -t "${ECR_URL}:${{ github.sha }}" \
+            -t "${ECR_URL}:latest" \
+            .
+          docker push "${ECR_URL}:${{ github.sha }}"
+          docker push "${ECR_URL}:latest"
+
+  # ─────────────────────────────────────────────────────────────
+  # JOB 3: Point ECS at the real image
+  # ─────────────────────────────────────────────────────────────
+  # Re-runs terraform apply with the commit-SHA tag so the ECS
+  # task definition references the image we just pushed.  ECS
+  # will perform a rolling deployment with the real container.
+  # ─────────────────────────────────────────────────────────────
+  update-ecs:
+    name: Update ECS Task Definition
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Update task definition with real image
+        run: terraform apply -auto-approve -var="image_tag=${{ github.sha }}"
+
+  # ─────────────────────────────────────────────────────────────
+  # JOB 4: Sync static assets to S3
+  # ─────────────────────────────────────────────────────────────
+  # Reads the ALB DNS name (from Job 1) and injects it into
+  # index.html so the frontend calls the correct API endpoint.
+  # Then uploads everything to the S3 website bucket.
+  # ─────────────────────────────────────────────────────────────
+  sync-s3:
+    name: Sync Static Assets to S3
+    needs: [terraform-apply, update-ecs]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Inject API endpoint and upload to S3
+        env:
+          ALB_DNS: ${{ needs.terraform-apply.outputs.alb_dns }}
+          S3_BUCKET: ${{ needs.terraform-apply.outputs.s3_bucket }}
+        run: |
+          # Replace the localhost API URL with the live ALB endpoint
+          sed "s|http://127.0.0.1:8080|http://${ALB_DNS}|g" frontend/index.html \
+            | aws s3 cp - "s3://${S3_BUCKET}/index.html" --content-type "text/html"
+
+          # Upload remaining static assets (excluding source/build files)
+          aws s3 sync . "s3://${S3_BUCKET}" \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "build/*" \
+            --exclude "terraform/*" \
+            --exclude "src/*" \
+            --exclude "tests/*" \
+            --exclude "*.db" \
+            --exclude ".env" \
+            --exclude ".dockerignore" \
+            --exclude "Dockerfile" \
+            --exclude "docker-compose.yml" \
+            --exclude "CMakeLists.txt" \
+            --exclude "CMakePresets.json" \
+            --exclude "vcpkg.json" \
+            --exclude ".gitignore" \
+            --exclude "index.html" \
+            --delete
