@@ -81,3 +81,15 @@ variable "log_retention_days" {
   type        = number
   default     = 30
 }
+
+variable "index_document" {
+  description = "Index document for the S3 website"
+  type        = string
+  default     = "index.html"
+}
+
+variable "error_document" {
+  description = "Error document for the S3 website"
+  type        = string
+  default     = "error.html"
+}
