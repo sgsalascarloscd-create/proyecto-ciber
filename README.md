@@ -22,16 +22,16 @@ The project uses **vcpkg** for dependency management, ensuring reproducible buil
 
 ## Tech Stack
 
-| Component | Technology |
-|---|---|
-| Language | C++20 |
-| Web Framework | [Drogon](https://github.com/drogonframework/drogon) 1.9.13 |
-| Logging | [spdlog](https://github.com/gabime/spdlog) |
-| Database ORM | [sqlite-orm](https://github.com/fnc12/sqlite_orm) |
-| JSON | [nlohmann-json](https://github.com/nlohmann/json) 3.12.0 |
-| Build System | CMake ≥ 3.22 + Ninja |
+| Component       | Technology                                                  |
+| --------------- | ----------------------------------------------------------- |
+| Language        | C++20                                                       |
+| Web Framework   | [Drogon](https://github.com/drogonframework/drogon) 1.9.13  |
+| Logging         | [spdlog](https://github.com/gabime/spdlog)                  |
+| Database ORM    | [sqlite-orm](https://github.com/fnc12/sqlite_orm)           |
+| JSON            | [nlohmann-json](https://github.com/nlohmann/json) 3.12.0    |
+| Build System    | CMake ≥ 3.22 + Ninja                                        |
 | Package Manager | [vcpkg](https://github.com/microsoft/vcpkg) (manifest mode) |
-| Testing | [Catch2](https://github.com/catchorg/Catch2) |
+| Testing         | [Catch2](https://github.com/catchorg/Catch2)                |
 
 ## Prerequisites
 
@@ -159,11 +159,11 @@ Anything in `.env` is passed to the container via the `env_file` directive. The 
 
 The application reads configuration from a `.env` file in the project root and falls back to default values if not set.
 
-| Variable | Default | Description |
-|---|---|---|
-| `PORT` | `8080` | HTTP server listening port |
-| `DB_PATH` | `backend.db` | Path to the SQLite database file |
-| `LOG_LEVEL` | `info` | Log level (`trace`, `debug`, `info`, `warn`, `error`, `critical`, `off`) |
+| Variable    | Default      | Description                                                              |
+| ----------- | ------------ | ------------------------------------------------------------------------ |
+| `PORT`      | `8080`       | HTTP server listening port                                               |
+| `DB_PATH`   | `backend.db` | Path to the SQLite database file                                         |
+| `LOG_LEVEL` | `info`       | Log level (`trace`, `debug`, `info`, `warn`, `error`, `critical`, `off`) |
 
 > [!NOTE]
 > The `.env` file is gitignored. Use `.env.example` as a template to create your own.
