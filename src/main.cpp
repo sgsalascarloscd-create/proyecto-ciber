@@ -21,6 +21,25 @@ int main(int argc, char *argv[]) {
   auto swagger = std::make_shared<SwaggerController>();
 
   drogon::app()
+      .registerPreRoutingAdvice([](const drogon::HttpRequestPtr &req,
+                                   drogon::FilterCallback &&stop,
+                                   drogon::FilterChainCallback &&pass) {
+        if (req->method() == drogon::Options) {
+          auto resp = drogon::HttpResponse::newHttpResponse();
+          resp->addHeader("Access-Control-Allow-Origin", "*");
+          resp->addHeader("Access-Control-Allow-Methods",
+                          "GET, POST, PUT, DELETE, OPTIONS");
+          resp->addHeader("Access-Control-Allow-Headers",
+                          "Content-Type, Authorization, X-Requested-With");
+          resp->addHeader("Access-Control-Max-Age",
+                          "86400"); // Cache preflight for 24 hours
+
+          // Terminate the chain early and send the 200 OK for OPTIONS
+          stop(resp);
+          return;
+        }
+        pass(); // Pass actual requests (GET, POST, etc.) down the line
+      })
       .registerHandler(
           "/api/v1/incidents",
           [ctrl](
@@ -82,6 +101,14 @@ int main(int argc, char *argv[]) {
             swagger->serveSpec(req, std::move(callback));
           },
           {drogon::Get})
+      .registerPostHandlingAdvice([](const drogon::HttpRequestPtr &req,
+                                     const drogon::HttpResponsePtr &resp) {
+        if (req->path() == "/api/v1/incidents") {
+          resp->addHeader("Access-Control-Allow-Origin", "*");
+          resp->addHeader("Access-Control-Allow-Credentials", "false");
+          resp->addHeader("X-Custom-Incident-Header", "Processed-Successfully");
+        }
+      })
       .setLogLevel(trantor::Logger::kInfo)
       .addListener("0.0.0.0", cfg.port)
       .setThreadNum(4)
