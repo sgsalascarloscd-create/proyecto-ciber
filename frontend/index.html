@@ -4,11 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SOC Panel — Capital One · USIL 2026</title>
+  <title>SOC Console — AWS Event correlation & Automated Incident Response</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700&family=Rajdhani:wght@400;500;600&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     *,
     *::before,
@@ -19,35 +17,30 @@
     }
 
     :root {
-      --bg: #050a05;
-      --s1: #080d08;
-      --s2: #0d150d;
-      --s3: #111f11;
-      --s4: #162016;
-      --border: #1a2e1a;
-      --border2: #224422;
-      --text: #b8ffb8;
-      --muted: #5a8a5a;
-      --hint: #2a4a2a;
-      --green: #00ff41;
-      --green2: #39ff14;
-      --green-dim: #00cc33;
-      --green-bg: #001a0a;
-      --cyan: #00ffcc;
-      --cyan-bg: #001a15;
-      --red: #ff2244;
-      --red-bg: #1a0008;
+      --bg: #030704;
+      --s1: #070e09;
+      --s2: #0b170e;
+      --s3: #0f2214;
+      --s4: #16301d;
+      --border: #1a3c22;
+      --border2: #2a5d34;
+      --text: #c0ffcb;
+      --muted: #62a572;
+      --hint: #366141;
+      --green: #00ff66;
+      --green-dim: #00b347;
+      --green-bg: rgba(0, 255, 102, 0.05);
+      --cyan: #00f3ff;
+      --cyan-bg: rgba(0, 243, 255, 0.05);
+      --red: #ff2255;
+      --red-dim: #b3183b;
+      --red-bg: rgba(255, 34, 85, 0.08);
       --amber: #ffaa00;
-      --amber-bg: #1a0d00;
-      --white: #e8ffe8;
+      --amber-bg: rgba(255, 170, 0, 0.08);
+      --white: #ebffef;
       --font-mono: 'Share Tech Mono', 'Courier New', monospace;
       --font-hud: 'Orbitron', monospace;
       --font-ui: 'Rajdhani', sans-serif;
-    }
-
-    html,
-    body {
-      height: 100%;
     }
 
     body {
@@ -55,12 +48,12 @@
       color: var(--text);
       font-family: var(--font-mono);
       font-size: 13px;
-      min-height: 100%;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 16px 48px;
-      -webkit-font-smoothing: antialiased;
+      padding: 20px 15px 40px;
+      overflow-x: hidden;
       cursor: default;
     }
 
@@ -72,8 +65,8 @@
       background: repeating-linear-gradient(0deg,
           transparent,
           transparent 2px,
-          rgba(0, 255, 65, 0.015) 2px,
-          rgba(0, 255, 65, 0.015) 4px);
+          rgba(0, 255, 102, 0.012) 2px,
+          rgba(0, 255, 102, 0.012) 4px);
       pointer-events: none;
       z-index: 9999;
     }
@@ -83,41 +76,25 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.7) 100%);
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.85) 100%);
       pointer-events: none;
       z-index: 9998;
     }
 
-    /* ── Boot animation ── */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .shell {
-      animation: fadeInUp 0.6s ease both;
-    }
-
-    /* ── Shell ── */
     .shell {
       width: 100%;
-      max-width: 1180px;
+      max-width: 1250px;
       border: 1px solid var(--border2);
-      border-radius: 4px;
+      border-radius: 6px;
       overflow: hidden;
       background: var(--s1);
       position: relative;
       box-shadow:
-        0 0 0 1px rgba(0, 255, 65, 0.06),
-        0 0 40px rgba(0, 255, 65, 0.04),
-        inset 0 0 60px rgba(0, 255, 65, 0.02);
+        0 0 0 1px rgba(0, 255, 102, 0.06),
+        0 0 50px rgba(0, 255, 102, 0.05),
+        inset 0 0 80px rgba(0, 255, 102, 0.02);
+      display: flex;
+      flex-direction: column;
     }
 
     /* Corner brackets */
@@ -125,34 +102,35 @@
     .shell::after {
       content: '';
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 25px;
+      height: 25px;
       border-color: var(--green);
       border-style: solid;
+      pointer-events: none;
       z-index: 10;
     }
 
     .shell::before {
       top: -1px;
       left: -1px;
-      border-width: 2px 0 0 2px;
-      border-radius: 3px 0 0 0;
+      border-width: 3px 0 0 3px;
+      border-radius: 5px 0 0 0;
     }
 
     .shell::after {
       bottom: -1px;
       right: -1px;
-      border-width: 0 2px 2px 0;
-      border-radius: 0 0 3px 0;
+      border-width: 0 3px 3px 0;
+      border-radius: 0 0 5px 0;
     }
 
-    /* ── Titlebar ── */
+    /* ── TITLEBAR ── */
     .titlebar {
-      height: 46px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
+      padding: 0 20px;
       background: var(--s2);
       border-bottom: 1px solid var(--border2);
       position: relative;
@@ -165,778 +143,807 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
-      opacity: 0.6;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0.5;
     }
 
-    .wm {
+    .titlebar-left {
       display: flex;
-      gap: 7px;
+      gap: 15px;
       align-items: center;
-    }
-
-    .wm-btn {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      border: 1px solid rgba(0, 0, 0, 0.4);
-      flex-shrink: 0;
-    }
-
-    .wm-r {
-      background: #ff5f57;
-    }
-
-    .wm-a {
-      background: #febc2e;
-    }
-
-    .wm-g {
-      background: #28c840;
-      box-shadow: 0 0 4px #28c840;
     }
 
     .titlebar-center {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
       display: flex;
       align-items: center;
       gap: 10px;
-      white-space: nowrap;
-    }
-
-    .title-main {
       font-family: var(--font-hud);
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--green);
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+      text-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
     }
 
-    .title-sep {
-      color: var(--hint);
-      font-size: 14px;
+    .titlebar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .title-sub {
-      font-family: var(--font-mono);
-      font-size: 11px;
+    /* Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 5px;
+    }
+
+    .tab-btn {
+      padding: 6px 14px;
+      border: 1px solid transparent;
+      background: transparent;
       color: var(--muted);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
       letter-spacing: 0.05em;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(0, 255, 102, 0.05);
+    }
+
+    .tab-btn.active {
+      color: var(--green);
+      background: var(--s3);
+      border-color: var(--border2);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.15);
+    }
+
+    /* Auth status pill */
+    .auth-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--s3);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .auth-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
+    }
+
+    .auth-dot.logged {
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
     }
 
     .srv-pill {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 12px;
-      border-radius: 2px;
-      border: 1px solid var(--border2);
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
       background: var(--s3);
-      font-family: var(--font-mono);
       font-size: 11px;
       color: var(--muted);
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-      letter-spacing: 0.04em;
     }
 
-    .srv-pill:hover {
-      border-color: var(--green-dim);
-      color: var(--green);
-    }
-
-    .srv-led {
+    .srv-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--hint);
-      flex-shrink: 0;
-      transition: background 0.3s, box-shadow 0.3s;
+      background: var(--amber);
     }
 
-    .srv-led.on {
+    .srv-dot.online {
       background: var(--green);
       box-shadow: 0 0 6px var(--green);
     }
 
-    .srv-led.err {
+    .srv-dot.offline {
       background: var(--red);
       box-shadow: 0 0 6px var(--red);
     }
 
-    /* ── MAIN GRID ── */
-    .main {
+    /* ── METRICS HEADER ── */
+    .metrics-bar {
       display: grid;
-      grid-template-columns: 360px 1fr;
-      min-height: 580px;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--border2);
+      background: var(--s2);
     }
 
-    /* ── LEFT ── */
-    .left {
-      border-right: 1px solid var(--border2);
+    .metric-card {
+      padding: 12px 20px;
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      background: var(--s1);
       position: relative;
     }
 
-    .panel-header {
-      padding: 16px 20px 14px;
-      border-bottom: 1px solid var(--border);
-      background: var(--s2);
+    .metric-card:last-child {
+      border-right: none;
     }
 
-    .panel-title {
-      font-family: var(--font-hud);
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      color: var(--green-dim);
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .panel-title::before {
-      content: '//';
-      color: var(--hint);
-      font-family: var(--font-mono);
-      font-size: 11px;
-    }
-
-    .form-area {
-      padding: 18px 20px 0;
-    }
-
-    .field {
-      margin-bottom: 13px;
-    }
-
-    .field label {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--muted);
-      margin-bottom: 5px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .field label::before {
-      content: '> ';
-      color: var(--green-dim);
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      background: var(--s3);
-      color: var(--green);
-      border: 1px solid var(--border2);
-      border-radius: 2px;
-      padding: 8px 12px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      caret-color: var(--green);
-    }
-
-    .field input::placeholder,
-    .field textarea::placeholder {
-      color: var(--hint);
-      font-size: 11px;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--green-dim);
-      box-shadow: 0 0 0 2px rgba(0, 255, 65, 0.08), inset 0 0 8px rgba(0, 255, 65, 0.03);
-    }
-
-    .field textarea {
-      height: 70px;
-      resize: none;
-    }
-
-    .field select {
-      cursor: pointer;
-      -webkit-appearance: none;
-    }
-
-    option {
-      background: var(--s3);
-    }
-
-    .row2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    /* ── Buttons ── */
-    .actions {
-      padding: 14px 20px 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 9px;
-    }
-
-    .btn {
-      padding: 9px 12px;
-      border-radius: 2px;
-      border: 1px solid var(--border2);
-      background: var(--s2);
-      color: var(--muted);
-      font-family: var(--font-hud);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      transition: all 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(0, 255, 65, 0.04) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover {
-      border-color: var(--green-dim);
-      color: var(--green);
-    }
-
-    .btn:hover::before {
-      opacity: 1;
-    }
-
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn.primary {
-      background: var(--green-bg);
-      color: var(--green);
-      border-color: var(--green-dim);
-      box-shadow: 0 0 12px rgba(0, 255, 65, 0.1);
-    }
-
-    .btn.primary:hover {
-      background: #002a12;
-      box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-    }
-
-    /* ── Status ── */
-    .status-wrap {
-      padding: 12px 20px 0;
-      min-height: 42px;
-    }
-
-    .status {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 8px 12px;
-      border-radius: 2px;
-      border-left: 2px solid transparent;
-      line-height: 1.5;
-      display: none;
-      letter-spacing: 0.02em;
-    }
-
-    .status::before {
-      content: '[SYS] ';
-      color: var(--hint);
-    }
-
-    .status.show {
-      display: block;
-    }
-
-    .status.ok {
-      background: var(--green-bg);
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    .status.err {
-      background: var(--red-bg);
-      border-color: var(--red);
-      color: var(--red);
-    }
-
-    /* ── Metrics ── */
-    .metrics {
-      padding: 16px 20px;
-      margin-top: auto;
-      border-top: 1px solid var(--border2);
-      background: var(--s2);
-    }
-
-    .metrics-label {
-      font-family: var(--font-hud);
-      font-size: 8px;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      color: var(--hint);
-      text-transform: uppercase;
-      margin-bottom: 11px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .metrics-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, var(--border2), transparent);
-    }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-
-    .metric {
-      background: var(--s3);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 12px 10px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .metric::before {
+    .metric-card::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      right: 0;
-      height: 1px;
+      height: 2px;
+      width: 30px;
+      background: var(--green);
     }
 
-    .metric.m-total::before {
-      background: var(--cyan);
+    .metric-card.m-crit::before { background: var(--red); }
+    .metric-card.m-high::before { background: var(--amber); }
+    .metric-card.m-events::before { background: var(--cyan); }
+
+    .metric-title {
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
     }
 
-    .metric.m-crit::before {
-      background: var(--red);
-    }
-
-    .metric.m-alta::before {
-      background: var(--amber);
-    }
-
-    .metric-val {
+    .metric-value {
       font-family: var(--font-hud);
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 700;
       line-height: 1;
-      letter-spacing: -0.02em;
     }
 
-    .metric-lbl {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--hint);
-      margin-top: 5px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .m-crit .metric-value { color: var(--red); text-shadow: 0 0 10px rgba(255, 34, 85, 0.4); }
+    .m-high .metric-value { color: var(--amber); text-shadow: 0 0 10px rgba(255, 170, 0, 0.4); }
+    .m-events .metric-value { color: var(--cyan); text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
+
+    /* ── TAB CONTENT CONTAINERS ── */
+    .tab-content {
+      display: none;
+      min-height: 550px;
     }
 
-    .mv-total {
-      color: var(--cyan);
-      text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+    .tab-content.active {
+      display: grid;
     }
 
-    .mv-crit {
-      color: var(--red);
-      text-shadow: 0 0 10px rgba(255, 34, 68, 0.4);
+    /* ── TAB 1: INCIDENT BOARD ── */
+    #tab-incidents {
+      grid-template-columns: 1fr 380px;
     }
 
-    .mv-alta {
-      color: var(--amber);
-      text-shadow: 0 0 10px rgba(255, 170, 0, 0.4);
-    }
-
-    /* ── RIGHT ── */
-    .right {
+    .incidents-main {
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      background: var(--s1);
+      overflow-y: auto;
+      max-height: 600px;
     }
 
-    .right-header {
-      padding: 16px 20px 14px;
-      border-bottom: 1px solid var(--border2);
-      background: var(--s2);
+    .section-title {
+      font-family: var(--font-hud);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 15px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-
-    .count-label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--hint);
-      letter-spacing: 0.06em;
-    }
-
-    .count-label span {
-      color: var(--cyan);
-    }
-
-    .filter-bar {
-      display: flex;
       gap: 8px;
-      padding: 10px 20px;
-      border-bottom: 1px solid var(--border);
-      background: var(--s2);
     }
 
-    .filter-bar input,
-    .filter-bar select {
-      background: var(--s3);
-      color: var(--green);
-      border: 1px solid var(--border2);
-      border-radius: 2px;
-      padding: 5px 10px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      outline: none;
-      transition: border-color 0.15s;
-      caret-color: var(--green);
-    }
-
-    .filter-bar input {
-      flex: 1;
-    }
-
-    .filter-bar input::placeholder {
+    .section-title::before {
+      content: '//';
       color: var(--hint);
     }
 
-    .filter-bar input:focus,
-    .filter-bar select:focus {
-      border-color: var(--green-dim);
-    }
-
-    /* Table */
-    .table-wrap {
+    .incidents-table-container {
       flex: 1;
-      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--s2);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: fixed;
-    }
-
-    colgroup col:nth-child(1) {
-      width: 124px;
-    }
-
-    colgroup col:nth-child(2) {
-      width: auto;
-    }
-
-    colgroup col:nth-child(3) {
-      width: 115px;
-    }
-
-    colgroup col:nth-child(4) {
-      width: 66px;
-    }
-
-    colgroup col:nth-child(5) {
-      width: 100px;
-    }
-
-    colgroup col:nth-child(6) {
-      width: 92px;
-    }
-
-    colgroup col:nth-child(7) {
-      width: 88px;
-    }
-
-    thead tr {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: var(--s3);
-      border-bottom: 1px solid var(--border2);
-    }
-
-    thead tr::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
-      opacity: 0.4;
+      text-align: left;
     }
 
     th {
-      padding: 9px 14px;
+      background: var(--s3);
+      padding: 10px 14px;
       font-family: var(--font-hud);
-      font-size: 9px;
-      font-weight: 600;
+      font-size: 10px;
       color: var(--muted);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      text-align: left;
-      white-space: nowrap;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.15s;
-    }
-
-    th:hover {
-      color: var(--green);
+      border-bottom: 1px solid var(--border);
     }
 
     td {
-      padding: 9px 14px;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      border-bottom: 1px solid rgba(26, 46, 26, 0.8);
-      color: var(--text);
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(26, 60, 34, 0.5);
+      font-size: 12px;
       vertical-align: middle;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      transition: background 0.1s;
+      cursor: pointer;
     }
 
-    tr:last-child td {
-      border-bottom: none;
+    tr:hover td {
+      background: rgba(0, 255, 102, 0.03);
     }
 
-    tbody tr:hover td {
-      background: rgba(0, 255, 65, 0.025);
+    tr.selected td {
+      background: rgba(0, 255, 102, 0.07);
+      border-left: 2px solid var(--green);
     }
 
-    /* Row entry animation */
-    @keyframes rowIn {
-      from {
-        opacity: 0;
-        transform: translateX(-6px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    tbody tr {
-      animation: rowIn 0.25s ease both;
-    }
-
-    .id-tag {
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: var(--green);
-      background: var(--green-bg);
-      border: 1px solid rgba(0, 255, 65, 0.15);
-      padding: 2px 7px;
+    .severity-badge {
+      display: inline-block;
+      padding: 2px 8px;
       border-radius: 2px;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      text-shadow: 0 0 6px rgba(0, 255, 65, 0.3);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
-    .badge {
+    .sev-critical { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-dim); }
+    .sev-high { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+    .sev-medium { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan); }
+    .sev-low { background: var(--s3); color: var(--muted); border: 1px solid var(--border); }
+
+    .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 2px 9px;
-      border-radius: 2px;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      white-space: nowrap;
+      gap: 5px;
+      font-size: 11px;
     }
 
-    .bp1 {
-      background: var(--red-bg);
-      color: var(--red);
-      border: 1px solid rgba(255, 34, 68, 0.25);
+    .status-open { color: var(--cyan); }
+    .status-in-progress { color: var(--amber); }
+    .status-resolved { color: var(--green); }
+
+    /* Right Sidebar: Details Panel */
+    .details-sidebar {
+      border-left: 1px solid var(--border2);
+      background: var(--s2);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      max-height: 600px;
     }
 
-    .bp2 {
-      background: var(--amber-bg);
-      color: var(--amber);
-      border: 1px solid rgba(255, 170, 0, 0.25);
+    .sidebar-block {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--s1);
+      padding: 15px;
     }
 
-    .bp3 {
-      background: var(--green-bg);
-      color: var(--green);
-      border: 1px solid rgba(0, 255, 65, 0.2);
-    }
-
-    .bs-curso {
-      background: var(--cyan-bg);
-      color: var(--cyan);
-      border: 1px solid rgba(0, 255, 204, 0.2);
-    }
-
-    .bs-pend {
-      background: var(--s3);
+    .sidebar-block-title {
+      font-family: var(--font-hud);
+      font-size: 10px;
       color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .detail-row span:first-child {
+      color: var(--muted);
+    }
+
+    .detail-desc {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    /* Timeline list */
+    .timeline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      padding-left: 15px;
+    }
+
+    .timeline-list::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 5px;
+      bottom: 5px;
+      width: 1px;
+      background: var(--border2);
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      top: 5px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      border: 2px solid var(--bg);
+    }
+
+    .timeline-time {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .timeline-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .timeline-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Evidence list */
+    .evidence-item {
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--s2);
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .evidence-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .evidence-json-link {
+      color: var(--cyan);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ── TAB 2: AWS LOG INGEST ── */
+    #tab-ingest {
+      padding: 20px;
+      grid-template-rows: auto 1fr;
+      gap: 15px;
+    }
+
+    .console-panel {
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      background: #020402;
+      box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.05);
+      padding: 15px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      color: #79f798;
+      overflow-y: auto;
+      max-height: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .log-entry {
+      border-bottom: 1px solid rgba(26, 60, 34, 0.1);
+      padding-bottom: 4px;
+    }
+
+    .log-time { color: var(--muted); }
+    .log-source { color: var(--cyan); }
+    .log-event { color: var(--green); font-weight: 700; }
+    .log-ip { color: var(--amber); }
+
+    /* ── TAB 3: CORRELATION RULES ── */
+    #tab-rules {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 15px;
+    }
+
+    .rule-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--s2);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .rule-card:hover {
+      border-color: var(--border2);
+    }
+
+    .rule-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .rule-name {
+      font-family: var(--font-hud);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .rule-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .rule-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .rule-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 34px;
+      height: 18px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: var(--s4);
+      transition: .4s;
+      border-radius: 18px;
       border: 1px solid var(--border);
     }
 
-    .tipo-txt {
+    .slider::before {
+      position: absolute;
+      content: "";
+      height: 10px;
+      width: 10px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--muted);
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--green-bg);
+      border-color: var(--green);
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(16px);
+      background-color: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* ── TAB 4: SIMULATOR ── */
+    #tab-simulator {
+      grid-template-columns: 350px 1fr;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .sim-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--s2);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sim-card-title {
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+
+    .sim-card-desc {
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .sim-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 11px;
+      padding-left: 10px;
+    }
+
+    .sim-step {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sim-step-num {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border: 1px solid var(--border2);
+      border-radius: 3px;
+      background: var(--s2);
+      color: var(--text);
+      font-family: var(--font-hud);
       font-size: 10px;
       font-weight: 600;
+      text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--hint);
-      font-family: var(--font-hud);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .empty {
-      padding: 60px 20px;
-      text-align: center;
-      color: var(--hint);
+    .btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.1);
     }
 
-    .empty-ascii {
-      font-family: var(--font-mono);
+    .btn.primary {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .btn.primary:hover {
+      background: rgba(0, 255, 102, 0.1);
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.2);
+    }
+
+    .sim-console-wrapper {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      background: #010201;
+      height: 100%;
+      min-height: 400px;
+    }
+
+    .sim-console-header {
+      background: var(--s3);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border2);
       font-size: 10px;
-      line-height: 1.4;
-      color: var(--hint);
-      margin-bottom: 16px;
-      opacity: 0.6;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
     }
 
-    .empty p {
+    .sim-console {
+      flex: 1;
+      padding: 15px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      color: #69eb7f;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ── AUTH MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 360px;
+      border: 1px solid var(--border2);
+      background: var(--s1);
+      border-radius: 4px;
+      box-shadow: 0 0 30px rgba(0, 255, 102, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-header {
+      background: var(--s2);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 15px;
+      font-family: var(--font-hud);
+      font-size: 11px;
+      color: var(--green);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field input {
+      background: var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 8px 10px;
+      color: var(--green);
       font-family: var(--font-mono);
       font-size: 12px;
-      line-height: 1.8;
-      color: var(--hint);
+      outline: none;
     }
 
-    .empty p span {
-      color: var(--green-dim);
+    .field input:focus {
+      border-color: var(--green);
     }
 
-    /* ── Log bar ── */
+    /* ── JSON VIEWER MODAL ── */
+    #json-modal .modal {
+      max-width: 650px;
+    }
+
+    .json-code {
+      max-height: 400px;
+      overflow-y: auto;
+      background: #020502;
+      color: #69eb7f;
+      padding: 15px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 11px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* ── FOOTER STATUS BAR ── */
     .logbar {
-      height: 28px;
+      height: 32px;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 0 18px;
+      padding: 0 20px;
       background: var(--bg);
       border-top: 1px solid var(--border2);
-      font-family: var(--font-mono);
       font-size: 11px;
       color: var(--hint);
       position: relative;
     }
 
-    .logbar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
-      opacity: 0.3;
-    }
-
     .log-pulse {
-      width: 5px;
-      height: 5px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--green);
-      flex-shrink: 0;
-      animation: glow-pulse 2s ease-in-out infinite;
+      animation: glow-pulse 1.8s ease-in-out infinite;
     }
 
     @keyframes glow-pulse {
-
-      0%,
-      100% {
-        opacity: 1;
-        box-shadow: 0 0 4px var(--green);
-      }
-
-      50% {
-        opacity: 0.2;
-        box-shadow: none;
-      }
+      0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--green); }
+      50% { opacity: 0.2; box-shadow: none; }
     }
 
     .log-prefix {
       color: var(--green-dim);
-      letter-spacing: 0.02em;
     }
 
-    /* Blinking cursor on log */
-    #logLine::after {
-      content: '█';
-      animation: blink 1.2s step-end infinite;
-      font-size: 10px;
-      opacity: 0.7;
+    /* Audio alert trigger or visual flash */
+    .flash-alert {
+      animation: danger-flash 0.5s ease-in-out 3;
     }
 
-    @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 0.7
-      }
-
-      50% {
-        opacity: 0
-      }
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--s1);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--border2);
-      border-radius: 2px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--muted);
+    @keyframes danger-flash {
+      0%, 100% { background-color: transparent; }
+      50% { background-color: rgba(255, 34, 85, 0.15); }
     }
   </style>
 </head>
@@ -945,182 +952,75 @@
 
   <div class="shell">
 
-    <!-- Titlebar -->
+    <!-- Header / Titlebar -->
     <div class="titlebar">
-      <div class="wm">
-        <div class="wm-btn wm-r"></div>
-        <div class="wm-btn wm-a"></div>
-        <div class="wm-btn wm-g"></div>
-      </div>
-      <div class="titlebar-center">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00ff41" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="filter:drop-shadow(0 0 4px #00ff41)">
+      <div class="titlebar-left">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ff66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px #00ff66)">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
-        <span class="title-main">SOC Terminal</span>
-        <span class="title-sep">/</span>
-        <span class="title-sub">Capital One · USIL 2026</span>
+        <span class="titlebar-center">SOC Monitor Panel</span>
       </div>
-      <div class="srv-pill" onclick="checkServer()" title="Verificar servidor C++">
-        <div class="srv-led" id="srvDot"></div>
-        <span id="srvLabel">localhost:8080</span>
+
+      <!-- Navigation tabs -->
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('incidents')">🛡️ Incidentes</button>
+        <button class="tab-btn" onclick="switchTab('ingest')">📜 Ingesta AWS</button>
+        <button class="tab-btn" onclick="switchTab('rules')">⚙️ Reglas</button>
+        <button class="tab-btn" onclick="switchTab('simulator')">🧪 Simulador</button>
+      </div>
+
+      <div class="titlebar-right">
+        <div class="srv-pill" title="Servidor Backend C++">
+          <div class="srv-dot" id="srv-status-dot"></div>
+          <span id="srv-status-label">Localhost:8080</span>
+        </div>
+        <div class="auth-pill" onclick="toggleAuthModal()" title="Credenciales Administrativas">
+          <div class="auth-dot" id="auth-status-dot"></div>
+          <span id="auth-status-label">ADMIN INICIAR</span>
+        </div>
       </div>
     </div>
 
-    <!-- Main -->
-    <div class="main">
-
-      <!-- LEFT -->
-      <div class="left">
-        <div class="panel-header">
-          <div class="panel-title">Registrar incidente</div>
-        </div>
-        <div class="form-area">
-          <div class="field">
-            <label>Descripción de vulnerabilidad</label>
-            <textarea id="desc" placeholder="Ej. SSRF en AWS metadata — credenciales IAM expuestas…"></textarea>
-          </div>
-          <div class="field">
-            <label>Actor de amenaza</label>
-            <input type="text" id="actor" placeholder="Ej. Paige Thompson">
-          </div>
-          <div class="row2">
-            <div class="field">
-              <label>Amenaza</label>
-              <select id="threat">
-                <option value="brute_force">Brute force</option>
-                <option value="sql_injection">SQL injection</option>
-                <option value="xss">XSS</option>
-                <option value="phishing">Phishing</option>
-                <option value="ddos">DDoS</option>
-                <option value="malware">Malware</option>
-                <option value="unauthorized_access">Acceso no autorizado</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Prioridad</label>
-              <select id="prio">
-                <option value="5">P5 — Crítica</option>
-                <option value="4">P4 — Alta</option>
-                <option value="3">P3 — Media</option>
-                <option value="2">P2 — Baja</option>
-                <option value="1">P1 — Informativa</option>
-              </select>
-            </div>
-          </div>
-          <div class="row2">
-            <div class="field">
-              <label>Responsable</label>
-              <input type="text" id="responsible" placeholder="Ej. security_team">
-            </div>
-            <div class="field">
-              <label>Estado</label>
-              <select id="status">
-                <option value="triaged">Triaged</option>
-                <option value="open">Open</option>
-                <option value="in_progress">In progress</option>
-                <option value="resolved">Resolved</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="actions">
-          <button class="btn primary" onclick="registrar()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-            Registrar
-          </button>
-          <button class="btn" onclick="cargarTabla()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="23 4 23 10 17 10" />
-              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-            </svg>
-            Actualizar
-          </button>
-        </div>
-        <div class="status-wrap">
-          <div class="status" id="statusEl"></div>
-        </div>
-        <div class="metrics">
-          <div class="metrics-label">Resumen operacional</div>
-          <div class="metrics-grid">
-            <div class="metric m-total">
-              <div class="metric-val mv-total" id="mTotal">0</div>
-              <div class="metric-lbl">Total</div>
-            </div>
-            <div class="metric m-crit">
-              <div class="metric-val mv-crit" id="mCrit">0</div>
-              <div class="metric-lbl">P1 Crítica</div>
-            </div>
-            <div class="metric m-alta">
-              <div class="metric-val mv-alta" id="mAlta">0</div>
-              <div class="metric-lbl">P2 Alta</div>
-            </div>
-          </div>
-        </div>
+    <!-- Metrics Summary -->
+    <div class="metrics-bar">
+      <div class="metric-card">
+        <span class="metric-title">Incidentes Generados</span>
+        <span class="metric-value" id="count-incidents">0</span>
       </div>
+      <div class="metric-card m-crit">
+        <span class="metric-title">Severidad Crítica</span>
+        <span class="metric-value" id="count-critical">0</span>
+      </div>
+      <div class="metric-card m-high">
+        <span class="metric-title">Severidad Alta</span>
+        <span class="metric-value" id="count-high">0</span>
+      </div>
+      <div class="metric-card m-events">
+        <span class="metric-title">Eventos AWS Procesados</span>
+        <span class="metric-value" id="count-events">0</span>
+      </div>
+    </div>
 
-      <!-- RIGHT -->
-      <div class="right">
-        <div class="right-header">
-          <div class="panel-title" style="margin-bottom:0">Base de datos — incidentes</div>
-          <span class="count-label" id="countLabel"><span>0</span> registros</span>
-        </div>
-        <div class="filter-bar">
-          <input type="text" id="filterText" placeholder="buscar descripción o actor..." oninput="filtrar()">
-          <select id="filterPrio" onchange="filtrar()">
-            <option value="">todas las prioridades</option>
-            <option value="1">P1 — Crítica</option>
-            <option value="2">P2 — Alta</option>
-            <option value="3">P3 — Media</option>
-          </select>
-          <select id="filterEstado" onchange="filtrar()">
-            <option value="">todos los estados</option>
-            <option value="open">En curso</option>
-            <option value="closed">Resuelto</option>
-          </select>
-        </div>
-        <div class="table-wrap">
+    <!-- TAB 1: INCIDENT BOARD -->
+    <div id="tab-incidents" class="tab-content active">
+      <div class="incidents-main">
+        <div class="section-title">Incidentes de Seguridad Activos</div>
+        <div class="incidents-table-container">
           <table>
-            <colgroup>
-              <col>
-              <col>
-              <col>
-              <col>
-              <col>
-              <col>
-              <col>
-            </colgroup>
             <thead>
               <tr>
-                <th onclick="sortBy('id')">ID</th>
-                <th>Descripción</th>
-                <th onclick="sortBy('actor')">Actor</th>
-                <th>Tipo</th>
-                <th onclick="sortBy('prio')">Prioridad</th>
-                <th>Estado</th>
-                <th onclick="sortBy('fecha')">Fecha</th>
+                <th style="width: 70px;">ID</th>
+                <th>Amenaza / Regla</th>
+                <th>Actor</th>
+                <th style="width: 110px;">Severidad</th>
+                <th style="width: 100px;">Estado</th>
+                <th style="width: 150px;">Detectado</th>
               </tr>
             </thead>
-            <tbody id="tbody">
+            <tbody id="incidents-table-body">
               <tr>
-                <td colspan="7">
-                  <div class="empty">
-                    <div class="empty-ascii">
-                      ██████╗ █████╗ ████████╗ █████╗ <br>
-                      ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗<br>
-                      ██║ ██║███████║ ██║ ███████║<br>
-                      ██║ ██║██╔══██║ ██║ ██╔══██║<br>
-                      ██████╔╝██║ ██║ ██║ ██║ ██║<br>
-                      ╚═════╝ ╚═╝ ╚═╝ ╚═╝ ╚═╝ ╚═╝
-                    </div>
-                    <p><span>$</span> ./servidor<br><span>></span> Conecta el backend C++ y registra el primer
-                      incidente.</p>
-                  </div>
+                <td colspan="6" style="text-align: center; color: var(--hint); padding: 50px;">
+                  No hay incidentes reportados.
                 </td>
               </tr>
             </tbody>
@@ -1128,218 +1028,603 @@
         </div>
       </div>
 
+      <!-- Sidebar details -->
+      <div class="details-sidebar">
+        <div class="section-title">Detalles del Incidente</div>
+        <div id="incident-details-content" style="display: none; display: flex; flex-direction: column; gap: 15px;">
+          
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Información General</div>
+            <div class="detail-row">
+              <span>Incidente ID:</span>
+              <span id="detail-id" style="color:var(--green);font-weight:700;">#0</span>
+            </div>
+            <div class="detail-row">
+              <span>Prioridad:</span>
+              <span id="detail-priority">-</span>
+            </div>
+            <div class="detail-row">
+              <span>Actor (IP):</span>
+              <span id="detail-actor" style="color:var(--cyan);">-</span>
+            </div>
+            <div class="detail-row">
+              <span>Responsable:</span>
+              <span id="detail-responsible">-</span>
+            </div>
+            <div class="detail-row">
+              <span>Estado:</span>
+              <span id="detail-status">-</span>
+            </div>
+          </div>
+
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Descripción y Categoría</div>
+            <p class="detail-desc" id="detail-desc">-</p>
+          </div>
+
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Evidencia Forense (CloudTrail)</div>
+            <div id="detail-evidence-list">
+              <span style="color: var(--hint); font-size:11px;">No hay evidencias vinculadas.</span>
+            </div>
+          </div>
+
+          <div class="sidebar-block">
+            <div class="sidebar-block-title">Línea Temporal de Eventos</div>
+            <div class="timeline-list" id="detail-timeline-list">
+              <span style="color: var(--hint); font-size:11px;">No hay registros de línea temporal.</span>
+            </div>
+          </div>
+
+        </div>
+        <div id="incident-details-placeholder" style="text-align: center; color: var(--hint); padding-top: 80px;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:15px; opacity:0.3;">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p>Selecciona un incidente de la tabla para ver el análisis de evidencias y línea temporal.</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Log bar -->
+    <!-- TAB 2: AWS LOG INGEST -->
+    <div id="tab-ingest" class="tab-content">
+      <div>
+        <div class="section-title">Consola de Ingestión de Eventos AWS (CloudTrail)</div>
+        <p style="color: var(--muted); font-size: 12px; margin-bottom: 5px;">
+          Esta consola muestra los registros de auditoría crudos ingestados en tiempo real desde EventBridge → Lambda.
+        </p>
+      </div>
+      <div class="console-panel" id="ingest-console">
+        <div class="log-entry"><span class="log-time">[SISTEMA]</span> Iniciando consola... Esperando eventos de CloudTrail.</div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CORRELATION RULES -->
+    <div id="tab-rules" class="tab-content">
+      <div>
+        <div class="section-title">Motor de Correlación - Reglas Activas</div>
+        <p style="color: var(--muted); font-size: 12px;">
+          Las reglas analizan los eventos AWS para detectar patrones sospechosos. Requiere <strong>iniciar sesión de Administrador</strong> para modificar su estado.
+        </p>
+      </div>
+      <div class="rules-grid" id="rules-list-container">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+
+    <!-- TAB 4: SIMULATOR -->
+    <div id="tab-simulator" class="tab-content">
+      <div class="sim-controls">
+        <div class="sim-card">
+          <div class="sim-card-title">Ataque SSRF y Exfiltración S3</div>
+          <p class="sim-card-desc">
+            Simula el famoso ataque a Capital One. El flujo simula los siguientes pasos:
+          </p>
+          <div class="sim-steps">
+            <div class="sim-step"><span class="sim-step-num">1.</span> <span>Modificación de SG (AuthorizeSecurityGroupIngress).</span></div>
+            <div class="sim-step"><span class="sim-step-num">2.</span> <span>Extracción de credenciales IAM vía SSRF en Metadatos (STS AssumeRole).</span></div>
+            <div class="sim-step"><span class="sim-step-num">3.</span> <span>Enumeración de recursos (GetCallerIdentity + ListBuckets).</span></div>
+            <div class="sim-step"><span class="sim-step-num">4.</span> <span>Descarga masiva de bucket sensible "capital-one-sensitive-data".</span></div>
+          </div>
+          <button class="btn primary" onclick="triggerSim('capital_one')">Simular Capital One</button>
+        </div>
+
+        <div class="sim-card">
+          <div class="sim-card-title">Backdoor de Privilegios IAM</div>
+          <p class="sim-card-desc">
+            Simula un atacante interno o comprometido que crea un usuario de respaldo y le otorga permisos de Administrador.
+          </p>
+          <div class="sim-steps">
+            <div class="sim-step"><span class="sim-step-num">1.</span> <span>Creación de usuario backdoor (CreateUser).</span></div>
+            <div class="sim-step"><span class="sim-step-num">2.</span> <span>Asignación de privilegios de Admin (AttachUserPolicy).</span></div>
+          </div>
+          <button class="btn" onclick="triggerSim('iam_backdoor')">Simular Backdoor IAM</button>
+        </div>
+
+        <button class="btn" style="border-color: var(--red); color: var(--red);" onclick="clearAllData()">Limpiar Datos</button>
+      </div>
+
+      <div class="sim-console-wrapper">
+        <div class="sim-console-header">
+          <span>Consola del Simulador Académico</span>
+          <span style="color:var(--cyan)">Simulación Local</span>
+        </div>
+        <div class="sim-console" id="sim-console-log">
+          <div>$ ./simulator --idle</div>
+          <div style="color:var(--muted)">Haga clic en cualquiera de los escenarios de la izquierda para iniciar la simulación y observe los eventos propagándose en la pestaña "Ingestión AWS".</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
     <div class="logbar">
       <div class="log-pulse"></div>
-      <span class="log-prefix">root@soc:~$&nbsp;</span>
-      <span id="logLine">iniciando conexión con servidor C++ en localhost:8080...</span>
+      <span class="log-prefix">root@soc-terminal:~$</span>
+      <span id="logbar-line">Sistema listo. Esperando eventos de seguridad...</span>
     </div>
 
   </div>
 
+  <!-- AUTH MODAL -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header">Iniciar Sesión Administrador</div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Usuario</label>
+          <input type="text" id="auth-username" value="admin">
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" id="auth-password" value="admin-password">
+        </div>
+        <div id="auth-error" style="color: var(--red); font-size:11px; display:none;">Credenciales incorrectas.</div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button class="btn primary" style="flex:1;" onclick="submitLogin()">Conectarse</button>
+          <button class="btn" style="flex:1;" onclick="toggleAuthModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON EVIDENCE MODAL -->
+  <div class="modal-overlay" id="json-modal">
+    <div class="modal">
+      <div class="modal-header" id="json-modal-title">Evidencia RAW - AWS Event</div>
+      <div class="modal-body">
+        <div class="json-code" id="json-modal-content">{}</div>
+        <button class="btn" style="margin-top: 10px;" onclick="closeJsonModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const BASE = 'http://127.0.0.1:8080';
-    let allRows = [];
-    let sortKey = null;
-    let sortAsc = true;
+    const API_BASE = 'http://127.0.0.1:8080';
+    let jwtToken = localStorage.getItem('soc_jwt') || '';
+    let serverOnline = false;
+    let currentIncidentId = null;
+    let autoRefreshInterval = null;
 
     function log(m) {
-      const el = document.getElementById('logLine');
-      el.textContent = m;
+      document.getElementById('logbar-line').textContent = m;
     }
 
-    function setStatus(m, t) {
-      const e = document.getElementById('statusEl');
-      e.textContent = m;
-      e.className = 'status show ' + (t || '');
-    }
-
-    async function checkServer() {
-      const dot = document.getElementById('srvDot');
-      const lbl = document.getElementById('srvLabel');
-      try {
-        const r = await fetch(BASE + '/api/v1/incidents', {signal: AbortSignal.timeout(2000)});
-        if (r.ok) {
-          dot.className = 'srv-led on';
-          lbl.textContent = 'localhost:8080 ✓';
-          cargarTabla();
-          log('servidor C++ activo — conexión establecida');
-        }
-      } catch {
-        dot.className = 'srv-led err';
-        lbl.textContent = 'localhost:8080 ✗';
-        log('sin respuesta en :8080 — ejecuta ./servidor en la terminal');
-      }
-    }
-
-    async function registrar() {
-      const desc = document.getElementById('desc').value.trim();
-      const actor = document.getElementById('actor').value.trim();
-      const responsible = document.getElementById('responsible').value.trim();
-      if (!desc || !actor || !responsible) {
-        setStatus('completa descripción, actor y responsable', 'err');
-        return;
-      }
-      const body = {
-        actor,
-        description: desc,
-        priority: parseInt(document.getElementById('prio').value),
-        responsible,
-        status: document.getElementById('status').value,
-        threat: document.getElementById('threat').value
-      };
-
-      try {
-        setStatus('enviando payload...', '');
-        const r = await fetch(BASE + '/api/v1/incidents', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(body),
-          signal: AbortSignal.timeout(4000)
-        });
-        if (!r.ok) {
-          const err = await r.text();
-          setStatus('error ' + r.status + ' — ' + err.substring(0, 80), 'err');
-          log('fallo POST /api/v1/incidents — ' + r.status);
-          return;
-        }
-        setStatus('incidente registrado correctamente', 'ok');
-        document.getElementById('desc').value = '';
-        document.getElementById('actor').value = '';
-        document.getElementById('responsible').value = '';
-        log('incidente registrado → ' + desc.substring(0, 50));
-        cargarTabla();
-      } catch {
-        setStatus('error de conexión — verifica el servidor', 'err');
-        log('fallo POST /api/v1/incidents — timeout');
-      }
-    }
-
-    async function cargarTabla() {
-      try {
-        const r = await fetch(BASE + '/api/v1/incidents', {signal: AbortSignal.timeout(3000)});
-        const data = await r.json();
-        parsear(data);
-      } catch {
-        log('no se pudo cargar la tabla — servidor desconectado');
-      }
-    }
-
-    function parsear(data) {
-      if (!Array.isArray(data) || !data.length) {
-        allRows = [];
-        renderTabla([]);
-        actualizarMetricas([]);
-        document.getElementById('countLabel').innerHTML = '<span>0</span> registros';
-        return;
-      }
-
-      allRows = data.map(item => ({
-        id: item.id,
-        desc: item.description,
-        actor: item.actor,
-        prio: item.priority,
-        estado: item.status,
-        tipo: item.threat,
-        fecha: item.created_at
-          ? new Date(item.created_at * 1000).toISOString().split('T')[0]
-          : '—'
-      }));
-
-      filtrar();
-      log('base de datos sincronizada — ' + allRows.length + ' registro(s) cargado(s)');
-    }
-
-    function filtrar() {
-      const txt = document.getElementById('filterText').value.toLowerCase();
-      const prio = document.getElementById('filterPrio').value;
-      const estado = document.getElementById('filterEstado').value;
-
-      let rows = allRows.filter(r => {
-        const matchTxt = !txt || r.desc.toLowerCase().includes(txt) || r.actor.toLowerCase().includes(txt);
-        const matchPrio = !prio || String(r.prio) === prio;
-        const matchEstado = !estado || r.estado === estado;
-        return matchTxt && matchPrio && matchEstado;
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-content').forEach(cont => {
+        cont.classList.remove('active');
       });
 
-      if (sortKey) {
-        rows = rows.slice().sort((a, b) => {
-          const va = a[sortKey], vb = b[sortKey];
-          return sortAsc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+      // Find button and add active
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+      
+      log('Navegando a pestaña: ' + tabId);
+      
+      if (tabId === 'incidents') {
+        fetchIncidents();
+      } else if (tabId === 'ingest') {
+        fetchIngestedEvents();
+      } else if (tabId === 'rules') {
+        fetchRules();
+      }
+    }
+
+    async function checkBackend() {
+      const dot = document.getElementById('srv-status-dot');
+      const lbl = document.getElementById('srv-status-label');
+      try {
+        const r = await fetch(API_BASE + '/api/v1/incidents', { signal: AbortSignal.timeout(1500) });
+        if (r.ok) {
+          dot.className = 'srv-dot online';
+          lbl.textContent = 'LOCALHOST:8080 ✓';
+          serverOnline = true;
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        dot.className = 'srv-dot offline';
+        lbl.textContent = 'LOCALHOST:8080 ✗';
+        serverOnline = false;
+      }
+      
+      updateAuthPill();
+    }
+
+    function toggleAuthModal() {
+      if (jwtToken) {
+        // Logout
+        jwtToken = '';
+        localStorage.removeItem('soc_jwt');
+        log('Sesión de administrador cerrada.');
+        updateAuthPill();
+        fetchRules(); // reload rules to see disabled inputs
+      } else {
+        document.getElementById('auth-modal').classList.toggle('active');
+      }
+    }
+
+    function updateAuthPill() {
+      const dot = document.getElementById('auth-status-dot');
+      const lbl = document.getElementById('auth-status-label');
+      if (jwtToken) {
+        dot.className = 'auth-dot logged';
+        lbl.textContent = 'ADMIN CONECTADO';
+      } else {
+        dot.className = 'auth-dot';
+        lbl.textContent = 'ADMIN INICIAR';
+      }
+    }
+
+    async function submitLogin() {
+      const user = document.getElementById('auth-username').value.trim();
+      const pass = document.getElementById('auth-password').value.trim();
+      const errEl = document.getElementById('auth-error');
+      
+      try {
+        const r = await fetch(API_BASE + '/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
         });
+        
+        if (!r.ok) throw new Error("Credenciales inválidas");
+        
+        const data = await r.json();
+        jwtToken = data.token;
+        localStorage.setItem('soc_jwt', jwtToken);
+        errEl.style.display = 'none';
+        document.getElementById('auth-modal').classList.remove('active');
+        log('Inicio de sesión de administrador exitoso.');
+        updateAuthPill();
+        fetchRules();
+      } catch (err) {
+        errEl.style.display = 'block';
+        log('Fallo de inicio de sesión.');
       }
-
-      renderTabla(rows);
-      actualizarMetricas(allRows);
-      document.getElementById('countLabel').innerHTML =
-        '<span>' + rows.length + '</span> de ' + allRows.length + ' registros';
     }
 
-    function sortBy(key) {
-      if (sortKey === key) sortAsc = !sortAsc;
-      else {sortKey = key; sortAsc = true;}
-      filtrar();
-    }
+    async function fetchIncidents() {
+      if (!serverOnline) return;
+      try {
+        const r = await fetch(API_BASE + '/api/v1/incidents');
+        if (!r.ok) return;
+        const data = await r.json();
 
-    function renderTabla(rows) {
-      const tbody = document.getElementById('tbody');
-      if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="7"><div class="empty">
-      <div class="empty-ascii">
-  ██████╗  █████╗ ████████╗ █████╗ <br>
-  ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗<br>
-  ██║  ██║███████║   ██║   ███████║<br>
-  ██║  ██║██╔══██║   ██║   ██╔══██║<br>
-  ██████╔╝██║  ██║   ██║   ██║  ██║<br>
-  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
-      </div>
-      <p><span style="color:var(--green-dim)">$</span> sin resultados que mostrar</p>
-    </div></td></tr>`;
-        return;
+        // Populate metrics based on response
+        document.getElementById('count-incidents').textContent = data.length;
+        document.getElementById('count-critical').textContent = data.filter(i => i.priority === 5).length;
+        document.getElementById('count-high').textContent = data.filter(i => i.priority === 4).length;
+
+        const tbody = document.getElementById('incidents-table-body');
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--hint); padding: 50px;">No hay incidentes reportados.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(inc => {
+          const dateStr = inc.created_at ? new Date(inc.created_at * 1000).toLocaleString() : '—';
+          const sevClass = inc.priority === 5 ? 'sev-critical' : (inc.priority === 4 ? 'sev-high' : (inc.priority === 3 ? 'sev-medium' : 'sev-low'));
+          const sevLabel = inc.priority === 5 ? 'Crítica' : (inc.priority === 4 ? 'Alta' : (inc.priority === 3 ? 'Media' : 'Baja'));
+          const statusClass = inc.status === 'open' ? 'status-open' : (inc.status === 'in_progress' ? 'status-in-progress' : 'status-resolved');
+          const isSelected = currentIncidentId === inc.id ? 'class="selected"' : '';
+          
+          return `
+            <tr onclick="selectIncident(${inc.id}, this)" ${isSelected}>
+              <td><span style="color:var(--green);font-weight:700;">#${inc.id}</span></td>
+              <td style="font-weight:600;color:var(--white);">${escapeHtml(inc.threat || inc.description.substring(0, 30))}</td>
+              <td><span style="color:var(--cyan);">${escapeHtml(inc.actor)}</span></td>
+              <td><span class="severity-badge ${sevClass}">${sevLabel}</span></td>
+              <td><span class="status-badge ${statusClass}">● ${escapeHtml(inc.status)}</span></td>
+              <td style="color:var(--muted);">${dateStr}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
       }
-      tbody.innerHTML = rows.map((r, i) => `
-    <tr style="animation-delay:${i * 0.04}s">
-      <td><span class="id-tag">${r.id}</span></td>
-      <td style="overflow:hidden;text-overflow:ellipsis" title="${r.desc}">${r.desc}</td>
-      <td style="overflow:hidden;text-overflow:ellipsis;color:var(--muted)">${r.actor}</td>
-      <td><span class="tipo-txt">${r.tipo}</span></td>
-      <td>${pb(r.prio)}</td>
-      <td>${sb(r.estado)}</td>
-      <td style="color:var(--hint);font-size:11px">${r.fecha}</td>
-    </tr>`).join('');
     }
 
-    function pb(p) {
-      if (p >= 4) return `<span class="badge bp1">
-    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    P${p} crítica</span>`;
-      if (p >= 3) return `<span class="badge bp2">
-    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-    P${p} alta</span>`;
-      return `<span class="badge bp3">P${p} media</span>`;
+    async function selectIncident(id, rowEl) {
+      // Toggle selection styling
+      document.querySelectorAll('#incidents-table-body tr').forEach(r => r.classList.remove('selected'));
+      rowEl.classList.add('selected');
+
+      currentIncidentId = id;
+      document.getElementById('incident-details-placeholder').style.display = 'none';
+      document.getElementById('incident-details-content').style.display = 'flex';
+
+      try {
+        // Fetch incident properties
+        const r_inc = await fetch(API_BASE + '/api/v1/incidents/' + id);
+        if (!r_inc.ok) return;
+        const inc = await r_inc.json();
+
+        // Populate sidebar
+        document.getElementById('detail-id').textContent = '#' + inc.id;
+        document.getElementById('detail-priority').textContent = inc.priority === 5 ? 'P5 - Crítica' : (inc.priority === 4 ? 'P4 - Alta' : 'P3 - Media');
+        document.getElementById('detail-actor').textContent = inc.actor;
+        document.getElementById('detail-responsible').textContent = inc.responsible;
+        document.getElementById('detail-status').className = 'status-badge ' + (inc.status === 'open' ? 'status-open' : (inc.status === 'in_progress' ? 'status-in-progress' : 'status-resolved'));
+        document.getElementById('detail-status').textContent = '● ' + inc.status;
+        document.getElementById('detail-desc').textContent = inc.description;
+
+        // Fetch evidence
+        const r_evd = await fetch(API_BASE + '/api/v1/incidents/' + id + '/evidence');
+        const evd_data = await r_evd.json();
+        const evdContainer = document.getElementById('detail-evidence-list');
+        
+        if (evd_data.length === 0) {
+          evdContainer.innerHTML = `<span style="color: var(--hint); font-size:11px;">No hay evidencias vinculadas.</span>`;
+        } else {
+          evdContainer.innerHTML = evd_data.map(evd => `
+            <div class="evidence-item">
+              <div class="evidence-meta">
+                <span>Ref AWS EventID:</span>
+                <span class="evidence-json-link" onclick="viewAwsEventJson('${escapeHtml(evd.aws_event_id)}')">${escapeHtml(evd.aws_event_id.substring(0, 15))}...</span>
+              </div>
+              <div style="color:var(--text);">${escapeHtml(evd.details)}</div>
+            </div>
+          `).join('');
+        }
+
+        // Fetch timeline
+        const r_tm = await fetch(API_BASE + '/api/v1/incidents/' + id + '/timeline');
+        const tm_data = await r_tm.json();
+        const tmContainer = document.getElementById('detail-timeline-list');
+        
+        if (tm_data.length === 0) {
+          tmContainer.innerHTML = `<span style="color: var(--hint); font-size:11px;">No hay registros de línea temporal.</span>`;
+        } else {
+          tmContainer.innerHTML = tm_data.map(tm => {
+            const tmDate = new Date(tm.event_time * 1000).toLocaleTimeString();
+            return `
+              <div class="timeline-item">
+                <span class="timeline-time">${tmDate}</span>
+                <div class="timeline-title">${escapeHtml(tm.title)}</div>
+                <div class="timeline-desc">${escapeHtml(tm.description)}</div>
+              </div>
+            `;
+          }).join('');
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
     }
 
-    function sb(e) {
-      return e === 'open'
-        ? `<span class="badge bs-curso">
-        <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>
-        en curso</span>`
-        : `<span class="badge bs-pend">
-        <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>
-        ${e}</span>`;
+    async function viewAwsEventJson(awsEventId) {
+      if (!serverOnline) return;
+      try {
+        const r = await fetch(API_BASE + '/api/v1/aws/events');
+        if (!r.ok) return;
+        const events = await r.json();
+        const ev = events.find(e => e.event_id === awsEventId);
+        
+        if (ev) {
+          document.getElementById('json-modal-title').textContent = "Evidencia AWS Event: " + ev.event_name;
+          document.getElementById('json-modal-content').textContent = JSON.stringify(ev, null, 2);
+          document.getElementById('json-modal').classList.add('active');
+        } else {
+          log("No se encontró el evento crudo para el ID: " + awsEventId);
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
 
-    function actualizarMetricas(rows) {
-      document.getElementById('mTotal').textContent = rows.length;
-      document.getElementById('mCrit').textContent = rows.filter(r => r.prio >= 4).length;
-      document.getElementById('mAlta').textContent = rows.filter(r => r.prio >= 3 && r.prio < 4).length;
+    function closeJsonModal() {
+      document.getElementById('json-modal').classList.remove('active');
     }
 
-    checkServer();
+    async function fetchIngestedEvents() {
+      if (!serverOnline) return;
+      try {
+        const headers = {};
+        if (jwtToken) {
+          headers['Authorization'] = 'Bearer ' + jwtToken;
+        }
+        
+        const r = await fetch(API_BASE + '/api/v1/aws/events', { headers });
+        if (r.status === 401) {
+          document.getElementById('ingest-console').innerHTML = `<div style="color:var(--red); text-align:center; padding:30px;">ACCESO DENEGADO. Inicie sesión como Administrador (ADMIN INICIAR) para auditar la ingesta de CloudTrail.</div>`;
+          return;
+        }
+        if (!r.ok) return;
+        
+        const events = await r.json();
+        document.getElementById('count-events').textContent = events.length;
+        
+        const consoleEl = document.getElementById('ingest-console');
+        if (events.length === 0) {
+          consoleEl.innerHTML = `<div class="log-entry"><span class="log-time">[SISTEMA]</span> Sin eventos en base de datos. Use el Simulador para poblar registros.</div>`;
+          return;
+        }
+
+        consoleEl.innerHTML = events.map(ev => {
+          const dateStr = new Date(ev.event_time * 1000).toLocaleTimeString();
+          return `
+            <div class="log-entry">
+              <span class="log-time">[${dateStr}]</span> 
+              <span class="log-source">${escapeHtml(ev.event_source)}</span> 
+              <span class="log-event">${escapeHtml(ev.event_name)}</span> 
+              <span>de</span> 
+              <span class="log-ip">${escapeHtml(ev.source_ip_address)}</span> 
+              <span style="color:var(--muted); font-size:10px; margin-left: 10px;">ID: ${escapeHtml(ev.event_id)}</span>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function fetchRules() {
+      if (!serverOnline) return;
+      try {
+        const headers = {};
+        if (jwtToken) {
+          headers['Authorization'] = 'Bearer ' + jwtToken;
+        }
+        
+        const r = await fetch(API_BASE + '/api/v1/aws/rules', { headers });
+        if (r.status === 401) {
+          document.getElementById('rules-list-container').innerHTML = `<div style="color:var(--red); text-align:center; width:100%; padding:50px;">ACCESO DENEGADO. Inicie sesión como Administrador (ADMIN INICIAR) para auditar las reglas de correlación.</div>`;
+          return;
+        }
+        if (!r.ok) return;
+        
+        const rules = await r.json();
+        const container = document.getElementById('rules-list-container');
+        
+        container.innerHTML = rules.map(rule => {
+          const activeChecked = rule.active === 1 ? 'checked' : '';
+          const disabledAttr = jwtToken ? '' : 'disabled';
+          const opacityStyle = jwtToken ? '' : 'style="opacity: 0.6;"';
+          
+          return `
+            <div class="rule-card" ${opacityStyle}>
+              <div class="rule-header">
+                <span class="rule-name">${escapeHtml(rule.name)}</span>
+                <span class="severity-badge ${rule.severity === 'Critical' ? 'sev-critical' : (rule.severity === 'High' ? 'sev-high' : 'sev-medium')}">${escapeHtml(rule.severity)}</span>
+              </div>
+              <p class="rule-desc">${escapeHtml(rule.description)}</p>
+              <div class="rule-meta">
+                <span>Ventana temporal: ${rule.time_window} segs</span>
+                <span style="color:var(--cyan); cursor:pointer;" onclick="viewConditionsJson('${escapeHtml(rule.name)}', ${JSON.stringify(rule.conditions).replace(/"/g, '&quot;')})">Ver Condición JSON</span>
+              </div>
+              <div class="rule-actions">
+                <span style="font-size:10px; color:var(--muted);">${rule.active === 1 ? 'ACTIVA' : 'INACTIVA'}</span>
+                <label class="switch">
+                  <input type="checkbox" ${activeChecked} ${disabledAttr} onchange="toggleRule(${rule.id}, this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function viewConditionsJson(name, condObj) {
+      document.getElementById('json-modal-title').textContent = "Condición de Regla: " + name;
+      document.getElementById('json-modal-content').textContent = JSON.stringify(condObj, null, 2);
+      document.getElementById('json-modal').classList.add('active');
+    }
+
+    async function toggleRule(id, checked) {
+      if (!jwtToken) return;
+      try {
+        const r = await fetch(API_BASE + '/api/v1/aws/rules', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + jwtToken
+          },
+          body: JSON.stringify({ toggle_id: id, active: checked })
+        });
+        if (r.ok) {
+          log('Regla de correlación #' + id + ' actualizada: ' + (checked ? 'Habilitada' : 'Deshabilitada'));
+          fetchRules();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function triggerSim(scenario) {
+      const consoleEl = document.getElementById('sim-console-log');
+      consoleEl.innerHTML += `<div>$ ./simulator --run ${scenario}</div>`;
+      consoleEl.innerHTML += `<div style="color:var(--cyan);">[INFO] Enviando triggers de simulación al backend SOC...</div>`;
+      
+      try {
+        const r = await fetch(API_BASE + '/api/v1/aws/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scenario })
+        });
+        
+        if (r.ok) {
+          const res = await r.json();
+          consoleEl.innerHTML += `<div style="color:var(--green); font-weight:700;">[OK] Simulación de "${scenario}" ejecutada. Se han enviado los payloads de CloudTrail.</div>`;
+          consoleEl.innerHTML += `<div>[INFO] El motor de correlación del backend C++ procesó los eventos en tiempo real.</div>`;
+          
+          // Trigger alarm flash
+          document.body.classList.add('flash-alert');
+          setTimeout(() => document.body.classList.remove('flash-alert'), 1500);
+
+          // Update data
+          checkBackend();
+          fetchIncidents();
+          fetchIngestedEvents();
+          
+          log('Simulación completada: ' + scenario);
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        consoleEl.innerHTML += `<div style="color:var(--red);">[ERR] Fallo de red al conectar con el servidor C++ en el puerto 8080. Asegúrese de que el backend esté ejecutándose.</div>`;
+      }
+      
+      // Auto scroll console
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    async function clearAllData() {
+      // Simulating cleanup by removing SQLite database items (we can delete tickets, but for safety in lab we can clear incidents through backend if supported, or manually reset)
+      // Since backend doesn't have a wipe endpoint, we can inform how to delete incidents via standard DELETE endpoint or simply notify.
+      // But we can delete the current list or explain that recreating docker volumes wipes it.
+      const consoleEl = document.getElementById('sim-console-log');
+      consoleEl.innerHTML += `<div style="color:var(--amber);">[WIPE] Para reiniciar completamente la base de datos sqlite en el laboratorio, ejecute: <br><strong>docker compose down --volumes</strong> y luego active <strong>docker compose up</strong>.</div>`;
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    function escapeHtml(string) {
+      return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Startup
+    window.onload = function() {
+      checkBackend();
+      fetchIncidents();
+      
+      // Set interval to poll backend every 3 seconds for live dashboard experience
+      autoRefreshInterval = setInterval(() => {
+        checkBackend();
+        if (document.getElementById('tab-incidents').classList.contains('active')) {
+          fetchIncidents();
+        } else if (document.getElementById('tab-ingest').classList.contains('active')) {
+          fetchIngestedEvents();
+        }
+      }, 3000);
+    };
   </script>
-
 </body>
 
 </html>

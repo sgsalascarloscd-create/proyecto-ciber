@@ -1,6 +1,8 @@
 #include "config.h"
 #include "controllers/incident_controller.h"
 #include "controllers/swagger_controller.h"
+#include "controllers/soc_controller.h"
+#include "services/security_service.h"
 #include "database.h"
 #include "seed.h"
 #include <drogon/drogon.h>
@@ -18,19 +20,21 @@ int main(int argc, char *argv[]) {
   seed_incidents(*db);
 
   auto ctrl = std::make_shared<IncidentController>(db);
+  auto soc_ctrl = std::make_shared<SocController>(db);
   auto swagger = std::make_shared<SwaggerController>();
 
   drogon::app()
       .registerPreRoutingAdvice([](const drogon::HttpRequestPtr &req,
                                    drogon::FilterCallback &&stop,
                                    drogon::FilterChainCallback &&pass) {
+        // 1. CORS Preflight
         if (req->method() == drogon::Options) {
           auto resp = drogon::HttpResponse::newHttpResponse();
           resp->addHeader("Access-Control-Allow-Origin", "*");
           resp->addHeader("Access-Control-Allow-Methods",
                           "GET, POST, PUT, DELETE, OPTIONS");
           resp->addHeader("Access-Control-Allow-Headers",
-                          "Content-Type, Authorization, X-Requested-With");
+                          "Content-Type, Authorization, X-Requested-With, X-SOC-Signature");
           resp->addHeader("Access-Control-Max-Age",
                           "86400"); // Cache preflight for 24 hours
 
@@ -38,6 +42,27 @@ int main(int argc, char *argv[]) {
           stop(resp);
           return;
         }
+
+        // 2. JWT Verification Filter for rules and get events
+        std::string path = req->path();
+        if (path == "/api/v1/aws/rules" || (path == "/api/v1/aws/events" && req->method() == drogon::Get)) {
+          std::string auth = req->getHeader("Authorization");
+          std::string token;
+          if (auth.rfind("Bearer ", 0) == 0) {
+            token = auth.substr(7);
+          }
+          std::string user;
+          if (token.empty() || !SecurityService::verify_jwt(token, user)) {
+            auto resp = drogon::HttpResponse::newHttpResponse();
+            resp->setStatusCode(drogon::k401Unauthorized);
+            resp->setBody("{\"error\":\"Unauthorized. Valid JWT token is required.\"}");
+            resp->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+            resp->addHeader("Access-Control-Allow-Origin", "*");
+            stop(resp);
+            return;
+          }
+        }
+
         pass(); // Pass actual requests (GET, POST, etc.) down the line
       })
       .registerHandler(
@@ -78,6 +103,64 @@ int main(int argc, char *argv[]) {
               int id) { ctrl->remove(req, std::move(callback), id); },
           {drogon::Delete})
       .registerHandler(
+          "/api/v1/auth/login",
+          [soc_ctrl](
+              const drogon::HttpRequestPtr &req,
+              std::function<void(const drogon::HttpResponsePtr &)> &&callback) {
+            soc_ctrl->login(req, std::move(callback));
+          },
+          {drogon::Post})
+      .registerHandler(
+          "/api/v1/aws/events",
+          [soc_ctrl](
+              const drogon::HttpRequestPtr &req,
+              std::function<void(const drogon::HttpResponsePtr &)> &&callback) {
+            if (req->method() == drogon::Post) {
+              soc_ctrl->ingestEvent(req, std::move(callback));
+            } else {
+              soc_ctrl->getEvents(req, std::move(callback));
+            }
+          },
+          {drogon::Post, drogon::Get})
+      .registerHandler(
+          "/api/v1/aws/rules",
+          [soc_ctrl](
+              const drogon::HttpRequestPtr &req,
+              std::function<void(const drogon::HttpResponsePtr &)> &&callback) {
+            if (req->method() == drogon::Post) {
+              soc_ctrl->updateRule(req, std::move(callback));
+            } else {
+              soc_ctrl->getRules(req, std::move(callback));
+            }
+          },
+          {drogon::Post, drogon::Get})
+      .registerHandler(
+          "/api/v1/incidents/{1}/timeline",
+          [soc_ctrl](
+              const drogon::HttpRequestPtr &req,
+              std::function<void(const drogon::HttpResponsePtr &)> &&callback,
+              int incident_id) {
+            soc_ctrl->getTimeline(req, std::move(callback), incident_id);
+          },
+          {drogon::Get})
+      .registerHandler(
+          "/api/v1/incidents/{1}/evidence",
+          [soc_ctrl](
+              const drogon::HttpRequestPtr &req,
+              std::function<void(const drogon::HttpResponsePtr &)> &&callback,
+              int incident_id) {
+            soc_ctrl->getEvidence(req, std::move(callback), incident_id);
+          },
+          {drogon::Get})
+      .registerHandler(
+          "/api/v1/aws/simulate",
+          [soc_ctrl](
+              const drogon::HttpRequestPtr &req,
+              std::function<void(const drogon::HttpResponsePtr &)> &&callback) {
+            soc_ctrl->runSimulation(req, std::move(callback));
+          },
+          {drogon::Post})
+      .registerHandler(
           "/swagger",
           [swagger](
               const drogon::HttpRequestPtr &req,
@@ -103,7 +186,7 @@ int main(int argc, char *argv[]) {
           {drogon::Get})
       .registerPostHandlingAdvice([](const drogon::HttpRequestPtr &req,
                                      const drogon::HttpResponsePtr &resp) {
-        if (req->path() == "/api/v1/incidents") {
+        if (req->path().rfind("/api/v1/", 0) == 0) {
           resp->addHeader("Access-Control-Allow-Origin", "*");
           resp->addHeader("Access-Control-Allow-Credentials", "false");
           resp->addHeader("X-Custom-Incident-Header", "Processed-Successfully");
@@ -116,3 +199,4 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
+

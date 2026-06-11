@@ -1,5 +1,6 @@
 #pragma once
 #include "models/incident.h"
+#include "models/soc_models.h"
 #include <memory>
 #include <optional>
 #include <spdlog/spdlog.h>
@@ -8,12 +9,17 @@
 
 class Database {
 public:
-  using Storage = decltype(
-      sqlite_orm::make_storage(std::string{}, make_incident_table()));
+  using Storage = decltype(sqlite_orm::make_storage(
+      std::string{}, make_incident_table(), make_aws_event_table(),
+      make_ioc_table(), make_correlation_rule_table(), make_evidence_table(),
+      make_timeline_table(), make_notification_table()));
 
   explicit Database(std::string db_path)
-      : storage_{sqlite_orm::make_storage(std::move(db_path),
-                                           make_incident_table())} {
+      : storage_{sqlite_orm::make_storage(
+            std::move(db_path), make_incident_table(), make_aws_event_table(),
+            make_ioc_table(), make_correlation_rule_table(),
+            make_evidence_table(), make_timeline_table(),
+            make_notification_table())} {
     auto result = storage_.sync_schema();
     for (auto &[table_name, status] : result) {
       switch (status) {
@@ -65,3 +71,4 @@ public:
 private:
   Storage storage_;
 };
+
